@@ -13,11 +13,13 @@
     {
         private readonly AppSettings _settings;
         private readonly ILogger<FileWatcher> _logger;
+        private readonly IFileGetter _fileGetter;
 
-        public FileWatcher(IOptions<AppSettings> settings, ILogger<FileWatcher> logger)
+        public FileWatcher(IOptions<AppSettings> settings, ILogger<FileWatcher> logger, IFileGetter getter)
         {
             _settings = settings.Value;
             _logger = logger;
+            _fileGetter = getter;
         }
 
         public void CheckForReadyFiles()
@@ -50,6 +52,8 @@
                     if (IsValidFile(item))
                     {
                         var file = item.Replace("\r", "");
+
+                        _fileGetter.CopyFileLocal(item);
 
                         // TODO
                         // Logging

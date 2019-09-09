@@ -34,6 +34,7 @@
 
                 services.AddScoped<IFileSender, FileSender>();
                 services.AddScoped<IFileWatcher, FileWatcher>();
+                services.AddScoped<IFileGetter, FileGetter>();
 
                 services.AddHostedService<FileWatcherService>();
             }
@@ -57,7 +58,6 @@
                     app.UseHsts();
                 }
 
-                //app.UseHttpsRedirection();
                 app.UseMvc();
             }
             catch( Exception except )
