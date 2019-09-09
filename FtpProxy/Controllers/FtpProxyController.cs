@@ -3,6 +3,7 @@
     using FtpProxy.Extensions;
     using FtpProxy.Interfaces;
     using Microsoft.AspNetCore.Mvc;
+    using Microsoft.Extensions.Logging;
     using System;
 
     [Route("api/proxy")]
@@ -10,15 +11,18 @@
     public class FtpProxyController : ControllerBase
     {
         private readonly IFileSender Sender;
+        private readonly ILogger<FtpProxyController> Logger;
 
-        public FtpProxyController(IFileSender sender)
+        public FtpProxyController(ILogger<FtpProxyController> logger, IFileSender sender)
         {
+            this.Logger = logger;
             this.Sender = sender;
         }
 
         [HttpGet]
         public ActionResult Ping()
         {
+            Logger.LogInformation($"Ping called at {DateTime.UtcNow}");
             return Ok($"Alive at {DateTime.UtcNow} (UTC)");
         }
 
@@ -27,15 +31,17 @@
         {
             try
             {
+                Logger.LogInformation($"FtpProxy.SendFile Called for: {source}");
+
                 source.CheckNullOrEmpty(nameof(source));
 
-                this.Sender.SendFile(source);
+                Sender.SendFile(source);
 
-                return Ok(true);
+                return Ok("Success");
             }
             catch (Exception except)
             {
-                // TODO: Log the event and return error
+                Logger.LogError(except, $"Error sending file {source}");
                 return BadRequest(except.ToString());
             }
         }

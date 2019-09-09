@@ -3,6 +3,7 @@
     using FtpProxy.DataObjects;
     using FtpProxy.Helpers;
     using FtpProxy.Interfaces;
+    using Microsoft.Extensions.Logging;
     using Microsoft.Extensions.Options;
     using System;
     using System.IO;
@@ -11,50 +12,61 @@
     public class FileWatcher : IFileWatcher
     {
         private readonly AppSettings _settings;
+        private readonly ILogger<FileWatcher> _logger;
 
-        public FileWatcher(IOptions<AppSettings> settings)
+        public FileWatcher(IOptions<AppSettings> settings, ILogger<FileWatcher> logger)
         {
             _settings = settings.Value;
+            _logger = logger;
         }
 
         public void CheckForReadyFiles()
         {
-            var ftpServer = GetServerAddress();
-            var user = _settings.FtpUser;
-            var password = _settings.FtpPassword;
-            var pickupFolder = _settings.PickupFolder;
-
-            var addressToCheck = $"{ftpServer}/{pickupFolder}";
-
-            var request = WebRequest.Create(addressToCheck);
-            request.Method = WebRequestMethods.Ftp.ListDirectory;
-
-            request.Credentials = new NetworkCredential(user, password);
-
-            var response = (FtpWebResponse)request.GetResponse();
-
-            var responseStream = response.GetResponseStream();
-            var reader = new StreamReader(responseStream);
-
-            var test = reader.ReadToEnd();
-
-            var list = test.Split('\n');
-
-            foreach( var item in list )
+            try
             {
-                if ( IsValidFile(item) )
-                {
-                    // TODO
-                    // Logging
-                    // Accept filename in body of receiving 
-                    // Copy files local and delete when confirmed present
+                var ftpServer = GetServerAddress();
+                var user = _settings.FtpUser;
+                var password = _settings.FtpPassword;
+                var pickupFolder = _settings.PickupFolder;
 
-                    Console.Write("Timed Background working...");
+                var addressToCheck = $"{ftpServer}/{pickupFolder}";
+
+                var request = WebRequest.Create(addressToCheck);
+                request.Method = WebRequestMethods.Ftp.ListDirectory;
+
+                request.Credentials = new NetworkCredential(user, password);
+
+                var response = (FtpWebResponse)request.GetResponse();
+
+                var responseStream = response.GetResponseStream();
+                var reader = new StreamReader(responseStream);
+
+                var test = reader.ReadToEnd();
+
+                var list = test.Split('\n');
+
+                foreach (var item in list)
+                {
+                    if (IsValidFile(item))
+                    {
+                        var file = item.Replace("\r", "");
+
+                        // TODO
+                        // Logging
+                        // Accept filename in body of receiving 
+                        // Copy files local and delete when confirmed present
+
+                        Console.WriteLine($"Timed Background working on {file}");
+                    }
                 }
+
+                reader.Close();
+                response.Close();
             }
-            
-            reader.Close();
-            response.Close();
+            catch (Exception except)
+            {
+                _logger.LogError(except, "Error checking for files for pickup.");
+            }
         }
 
         private string GetServerAddress()

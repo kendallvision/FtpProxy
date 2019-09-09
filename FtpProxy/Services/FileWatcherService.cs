@@ -4,6 +4,7 @@
     using FtpProxy.Interfaces;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Hosting;
+    using Microsoft.Extensions.Logging;
     using Microsoft.Extensions.Options;
     using System;
     using System.Threading;
@@ -13,13 +14,15 @@
     {
         private readonly AppSettings _settings;
         private readonly IServiceProvider _services;
+        private readonly ILogger<FileWatcherService> _logger;
 
         private Timer _timer;
 
-        public FileWatcherService(IOptions<AppSettings> settings, IServiceProvider services)
+        public FileWatcherService(IOptions<AppSettings> settings, IServiceProvider services, ILogger<FileWatcherService> logger)
         {
             _settings = settings.Value;
             _services = services;
+            _logger = logger;
         }
 
         public Task StartAsync(CancellationToken cancellationToken)
@@ -40,10 +43,17 @@
 
         private void DoWork(object state)
         {
-            using( var scope = _services.CreateScope() )
+            try
             {
-                var scopedService = scope.ServiceProvider.GetRequiredService<IFileWatcher>();
-                scopedService.CheckForReadyFiles();
+                using (var scope = _services.CreateScope())
+                {
+                    var scopedService = scope.ServiceProvider.GetRequiredService<IFileWatcher>();
+                    scopedService.CheckForReadyFiles();
+                }
+            }
+            catch(Exception except)
+            {
+                _logger.LogError(except, "Error running file watcher service task.");
             }
         }
     }
