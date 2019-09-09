@@ -20,7 +20,7 @@
 
         public void SendFile(string sourceFile)
         {
-            sourceFile.CheckNull(nameof(sourceFile));
+            sourceFile.CheckNullOrEmpty(nameof(sourceFile));
 
             var fileName = Path.GetFileName(sourceFile);
 
@@ -60,7 +60,7 @@
                     request.GetResponse();
                 }
             }
-            catch
+            finally
             {
                 // Do nothing - just attempt it
             }

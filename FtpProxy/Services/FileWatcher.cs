@@ -15,17 +15,20 @@
         private readonly ILogger<FileWatcher> _logger;
         private readonly IFileGetter _fileGetter;
         private readonly INotifier _notifier;
+        private readonly IFileDeleter _deleter;
 
         public FileWatcher(
             IOptions<AppSettings> settings,
             ILogger<FileWatcher> logger,
             INotifier notifier,
+            IFileDeleter deleter,
             IFileGetter getter)
         {
             _settings = settings.Value;
             _logger = logger;
             _fileGetter = getter;
             _notifier = notifier;
+            _deleter = deleter;
         }
 
         public void CheckForReadyFiles()
@@ -55,15 +58,17 @@
 
                 foreach (var item in list)
                 {
-                    if (IsValidFile(item))
-                    {
-                        var file = item.Replace("\r", "");
+                    var file = item.Replace("\r", "");
 
+                    if (IsValidFile(file))
+                    {
                         Console.WriteLine($"Timed Background working on {file}");
 
                         _fileGetter.CopyFileLocal(item);
 
-                        _notifier.SendNotification(item);
+                        _notifier.SendNotification(file);
+
+                        _deleter.DeleteFromFTP(file);
 
                         // TODO
                         // Logging

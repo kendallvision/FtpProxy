@@ -13,5 +13,7 @@
         public string FtpUser { get; set; }
 
         public string FtpPassword { get; set; }
+
+        public string LocalDestination { get; set; }
     }
 }

@@ -4,16 +4,16 @@
     using FtpProxy.Interfaces;
     using Microsoft.Extensions.Options;
 
-    public class Notifier : INotifier
+    public class FileDeleter : IFileDeleter
     {
         private readonly AppSettings Settings;
 
-        public Notifier(IOptions<AppSettings> settings)
+        public FileDeleter(IOptions<AppSettings> settings)
         {
             Settings = settings.Value;
         }
 
-        public void SendNotification(string filename)
+        public void DeleteFromFTP(string filename)
         {
             throw new System.NotImplementedException();
         }
