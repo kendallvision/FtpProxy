@@ -60,7 +60,7 @@
                     request.GetResponse();
                 }
             }
-            finally
+            catch
             {
                 // Do nothing - just attempt it
             }
