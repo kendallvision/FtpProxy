@@ -35,6 +35,7 @@
                 services.AddScoped<IFileSender, FileSender>();
                 services.AddScoped<IFileWatcher, FileWatcher>();
                 services.AddScoped<IFileGetter, FileGetter>();
+                services.AddScoped<INotifier, Notifier>();
 
                 services.AddHostedService<FileWatcherService>();
             }

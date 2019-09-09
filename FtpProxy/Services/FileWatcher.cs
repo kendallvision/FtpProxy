@@ -14,12 +14,18 @@
         private readonly AppSettings _settings;
         private readonly ILogger<FileWatcher> _logger;
         private readonly IFileGetter _fileGetter;
+        private readonly INotifier _notifier;
 
-        public FileWatcher(IOptions<AppSettings> settings, ILogger<FileWatcher> logger, IFileGetter getter)
+        public FileWatcher(
+            IOptions<AppSettings> settings,
+            ILogger<FileWatcher> logger,
+            INotifier notifier,
+            IFileGetter getter)
         {
             _settings = settings.Value;
             _logger = logger;
             _fileGetter = getter;
+            _notifier = notifier;
         }
 
         public void CheckForReadyFiles()
@@ -53,14 +59,16 @@
                     {
                         var file = item.Replace("\r", "");
 
+                        Console.WriteLine($"Timed Background working on {file}");
+
                         _fileGetter.CopyFileLocal(item);
+
+                        _notifier.SendNotification(item);
 
                         // TODO
                         // Logging
                         // Accept filename in body of receiving 
                         // Copy files local and delete when confirmed present
-
-                        Console.WriteLine($"Timed Background working on {file}");
                     }
                 }
 
