@@ -8,12 +8,17 @@
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
+    using Microsoft.Extensions.Logging;
+    using System;
 
     public class Startup
     {
-        public Startup(IConfiguration configuration)
+        private readonly ILogger<Startup> Logger;
+
+        public Startup(IConfiguration configuration, ILogger<Startup> logger)
         {
             Configuration = configuration;
+            Logger = logger;
         }
 
         public IConfiguration Configuration { get; }
@@ -21,30 +26,44 @@
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+            try
+            {
+                services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
-            services.Configure<AppSettings>(Configuration.GetSection("AppSettings"));
+                services.Configure<AppSettings>(Configuration.GetSection("AppSettings"));
 
-            services.AddScoped<IFileSender, FileSender>();
-            services.AddScoped<IFileWatcher, FileWatcher>();
+                services.AddScoped<IFileSender, FileSender>();
+                services.AddScoped<IFileWatcher, FileWatcher>();
 
-            services.AddHostedService<FileWatcherService>();
+                services.AddHostedService<FileWatcherService>();
+            }
+            catch (Exception except)
+            {
+                Logger.LogError(except, "Error during Startup.ConfigureServices");
+            }
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
-            if (env.IsDevelopment())
+            try
             {
-                app.UseDeveloperExceptionPage();
-            }
-            else
-            {
-                app.UseHsts();
-            }
+                if (env.IsDevelopment())
+                {
+                    app.UseDeveloperExceptionPage();
+                }
+                else
+                {
+                    app.UseHsts();
+                }
 
-            app.UseHttpsRedirection();
-            app.UseMvc();
+                //app.UseHttpsRedirection();
+                app.UseMvc();
+            }
+            catch( Exception except )
+            {
+                Logger.LogError(except, "Error during Startup.Configure");
+            }
         }
     }
 }

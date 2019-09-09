@@ -2,7 +2,8 @@
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Logging.Debug;
+using NLog.Web;
+using System;
 
 namespace FtpProxy
 {
@@ -10,7 +11,21 @@ namespace FtpProxy
     {
         public static void Main(string[] args)
         {
-            CreateWebHostBuilder(args).Build().Run();
+            var logger = NLogBuilder.ConfigureNLog("nlog.config").GetCurrentClassLogger();
+
+            try
+            {
+                logger.Debug("init main");
+                CreateWebHostBuilder(args).Build().Run();
+            }
+            catch ( Exception except )
+            {
+                logger.Error(except, "Stopped program because of an exception");
+            }
+            finally
+            {
+                NLog.LogManager.Shutdown();
+            }
         }
 
         public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
@@ -30,6 +45,7 @@ namespace FtpProxy
                     logging.AddDebug();
                     logging.AddEventSourceLogger();
                 })
+                .UseNLog()
                 .UseIISIntegration()
                 .UseStartup<Startup>();
     }
