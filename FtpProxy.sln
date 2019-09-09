@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29001.49
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FtpProxy", "FtpProxy\FtpProxy.csproj", "{9779D66D-F5AF-476D-AAF4-E69FB822DA8A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FtpProxy.Test", "FtpProxy.Test\FtpProxy.Test.csproj", "{5083AAB7-F619-4E01-9B24-91103AD8F952}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{9779D66D-F5AF-476D-AAF4-E69FB822DA8A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9779D66D-F5AF-476D-AAF4-E69FB822DA8A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9779D66D-F5AF-476D-AAF4-E69FB822DA8A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9779D66D-F5AF-476D-AAF4-E69FB822DA8A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5083AAB7-F619-4E01-9B24-91103AD8F952}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5083AAB7-F619-4E01-9B24-91103AD8F952}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5083AAB7-F619-4E01-9B24-91103AD8F952}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5083AAB7-F619-4E01-9B24-91103AD8F952}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {E621FDCB-2D75-4C91-8F10-3AF19F64C8D9}
+	EndGlobalSection
+EndGlobal
