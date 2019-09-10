@@ -27,7 +27,7 @@
 
             fileName = string.IsNullOrEmpty(AppSettings.DropFolder) ? fileName : $"{this.AppSettings.DropFolder}/{fileName}";
 
-            var destination = ftpServer + "/" + fileName + " " + DateTime.Now.Ticks;
+            var destination = ftpServer + "/" + fileName;
 
             var ftpUsername = this.AppSettings.FtpUser;
             var ftpPassword = this.AppSettings.FtpPassword;
@@ -59,7 +59,7 @@
                     request.GetResponse();
                 }
             }
-            finally
+            catch
             {
                 // Do nothing - just attempt it
             }
