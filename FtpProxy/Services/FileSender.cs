@@ -4,17 +4,16 @@
     using FtpProxy.Extensions;
     using FtpProxy.Interfaces;
     using Microsoft.Extensions.Options;
-    using System;
     using System.IO;
     using System.Net;
 
     public class FileSender : IFileSender
     {
-        private readonly AppSettings AppSettings;
+        private readonly AppSettings _settings;
 
         public FileSender(IOptions<AppSettings> settings)
         {
-            this.AppSettings = settings.Value;
+            this._settings = settings.Value;
         }
 
         public void SendFile(string sourceFile)
@@ -22,17 +21,14 @@
             sourceFile.CheckNullOrEmpty(nameof(sourceFile));
 
             var fileName = Path.GetFileName(sourceFile);
+            fileName = string.IsNullOrEmpty(_settings.DropFolder) ? fileName : $"{this._settings.DropFolder}/{fileName}";
 
             var ftpServer = this.GetServerAddress();
-
-            fileName = string.IsNullOrEmpty(AppSettings.DropFolder) ? fileName : $"{this.AppSettings.DropFolder}/{fileName}";
-
             var destination = ftpServer + "/" + fileName;
+            var ftpUsername = this._settings.FtpUser;
+            var ftpPassword = this._settings.FtpPassword;
 
-            var ftpUsername = this.AppSettings.FtpUser;
-            var ftpPassword = this.AppSettings.FtpPassword;
-
-            this.CreateDirectory(ftpServer, AppSettings.DropFolder, ftpUsername, ftpPassword);
+            this.CreateDirectory(ftpServer, _settings.DropFolder, ftpUsername, ftpPassword);
 
             using (var client = new WebClient())
             {
@@ -43,7 +39,7 @@
 
         private string GetServerAddress()
         {
-            var ftpServer = this.AppSettings.FtpServerAddress;
+            var ftpServer = this._settings.FtpServerAddress;
             return FilePathHelper.StripTrailingSlash(ftpServer);
         }
 

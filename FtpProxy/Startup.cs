@@ -13,15 +13,14 @@
 
     public class Startup
     {
-        private readonly ILogger<Startup> Logger;
+        private readonly ILogger<Startup> _logger;
+        private readonly IConfiguration _config;
 
         public Startup(IConfiguration configuration, ILogger<Startup> logger)
         {
-            Configuration = configuration;
-            Logger = logger;
+            _config = configuration;
+            _logger = logger;
         }
-
-        public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
@@ -32,7 +31,7 @@
                     .SetCompatibilityVersion(CompatibilityVersion.Version_2_1)
                     .AddXmlSerializerFormatters();
 
-                services.Configure<AppSettings>(Configuration.GetSection("AppSettings"));
+                services.Configure<AppSettings>(_config.GetSection("AppSettings"));
 
                 services.AddScoped<IFileSender, FileSender>();
                 services.AddScoped<IFileWatcher, FileWatcher>();
@@ -43,7 +42,7 @@
             }
             catch (Exception except)
             {
-                Logger.LogError(except, "Error during Startup.ConfigureServices");
+                _logger.LogError(except, "Error during Startup.ConfigureServices");
             }
         }
 
@@ -65,7 +64,7 @@
             }
             catch( Exception except )
             {
-                Logger.LogError(except, "Error during Startup.Configure");
+                _logger.LogError(except, "Error during Startup.Configure");
             }
         }
     }

@@ -36,12 +36,10 @@
                 var user = _settings.FtpUser;
                 var password = _settings.FtpPassword;
                 var pickupFolder = _settings.PickupFolder;
-
                 var addressToCheck = $"{ftpServer}/{pickupFolder}";
 
                 var request = WebRequest.Create(addressToCheck);
                 request.Method = WebRequestMethods.Ftp.ListDirectory;
-
                 request.Credentials = new NetworkCredential(user, password);
 
                 var response = (FtpWebResponse)request.GetResponse();
@@ -49,13 +47,12 @@
                 var responseStream = response.GetResponseStream();
                 var reader = new StreamReader(responseStream);
 
-                var test = reader.ReadToEnd();
+                var ftpFileList = reader.ReadToEnd();
+                var fileList = ftpFileList.Split('\n');
 
-                var list = test.Split('\n');
-
-                foreach (var item in list)
+                foreach (var rawFileName in fileList)
                 {
-                    var file = item.Replace("\r", "");
+                    var file = rawFileName.Replace("\r", "");
 
                     if (IsValidFile(file))
                     {
