@@ -28,7 +28,9 @@
         {
             try
             {
-                services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+                services.AddMvc()
+                    .SetCompatibilityVersion(CompatibilityVersion.Version_2_1)
+                    .AddXmlSerializerFormatters();
 
                 services.Configure<AppSettings>(Configuration.GetSection("AppSettings"));
 
@@ -36,7 +38,6 @@
                 services.AddScoped<IFileWatcher, FileWatcher>();
                 services.AddScoped<IFileGetter, FileGetter>();
                 services.AddScoped<INotifier, Notifier>();
-                services.AddScoped<IFileDeleter, FileDeleter>();
 
                 services.AddHostedService<FileWatcherService>();
             }

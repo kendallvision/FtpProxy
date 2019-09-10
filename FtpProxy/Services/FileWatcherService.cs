@@ -16,9 +16,12 @@
         private readonly IServiceProvider _services;
         private readonly ILogger<FileWatcherService> _logger;
 
-        private Timer _timer;
+        private static Timer _timer;
+        private static object _locker = new object();
 
-        public FileWatcherService(IOptions<AppSettings> settings, IServiceProvider services, ILogger<FileWatcherService> logger)
+        public FileWatcherService(IOptions<AppSettings> settings, 
+            IServiceProvider services, 
+            ILogger<FileWatcherService> logger)
         {
             _settings = settings.Value;
             _services = services;
@@ -37,23 +40,25 @@
         public Task StopAsync(CancellationToken cancellationToken)
         {
             _timer?.Change(Timeout.Infinite, 0);
-
             return Task.CompletedTask;
         }
 
         private void DoWork(object state)
         {
-            try
+            lock (_locker)
             {
-                using (var scope = _services.CreateScope())
+                try
                 {
-                    var scopedService = scope.ServiceProvider.GetRequiredService<IFileWatcher>();
-                    scopedService.CheckForReadyFiles();
+                    using (var scope = _services.CreateScope())
+                    {
+                        var scopedService = scope.ServiceProvider.GetRequiredService<IFileWatcher>();
+                        scopedService.CheckForReadyFiles();
+                    }
                 }
-            }
-            catch(Exception except)
-            {
-                _logger.LogError(except, "Error running file watcher service task.");
+                catch (Exception except)
+                {
+                    _logger.LogError(except, "Error running file watcher service task.");
+                }
             }
         }
     }

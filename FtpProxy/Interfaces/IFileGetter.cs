@@ -2,6 +2,6 @@
 {
     public interface IFileGetter
     {
-        void CopyFileLocal(string filename);
+        bool CopyFileLocal(string filename);
     }
 }

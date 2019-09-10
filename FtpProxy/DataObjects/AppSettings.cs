@@ -15,5 +15,7 @@
         public string FtpPassword { get; set; }
 
         public string LocalDestination { get; set; }
+
+        public string NotificationAddress { get; set; }
     }
 }

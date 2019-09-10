@@ -1,7 +1,9 @@
 ﻿namespace FtpProxy.Interfaces
 {
+    using System.Threading.Tasks;
+
     public interface INotifier
     {
-        void SendNotification(string filename);
+        Task<string> SendNotification(string filename);
     }
 }

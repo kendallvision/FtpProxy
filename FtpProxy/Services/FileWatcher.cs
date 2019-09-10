@@ -15,20 +15,17 @@
         private readonly ILogger<FileWatcher> _logger;
         private readonly IFileGetter _fileGetter;
         private readonly INotifier _notifier;
-        private readonly IFileDeleter _deleter;
 
         public FileWatcher(
             IOptions<AppSettings> settings,
             ILogger<FileWatcher> logger,
             INotifier notifier,
-            IFileDeleter deleter,
             IFileGetter getter)
         {
             _settings = settings.Value;
             _logger = logger;
             _fileGetter = getter;
             _notifier = notifier;
-            _deleter = deleter;
         }
 
         public void CheckForReadyFiles()
@@ -62,18 +59,13 @@
 
                     if (IsValidFile(file))
                     {
-                        Console.WriteLine($"Timed Background working on {file}");
+                        _logger.LogDebug($"Timed Background working on {file}");
 
-                        _fileGetter.CopyFileLocal(item);
-
-                        _notifier.SendNotification(file);
-
-                        _deleter.DeleteFromFTP(file);
-
-                        // TODO
-                        // Logging
-                        // Accept filename in body of receiving 
-                        // Copy files local and delete when confirmed present
+                        if ( _fileGetter.CopyFileLocal(file) )
+                        {
+                            var notifyResponse = _notifier.SendNotification(file).Result;
+                            _logger.LogDebug($"Notify: {notifyResponse}");
+                        }
                     }
                 }
 
