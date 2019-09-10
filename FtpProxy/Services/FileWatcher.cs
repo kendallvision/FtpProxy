@@ -1,7 +1,7 @@
 ﻿namespace FtpProxy.Services
 {
     using FtpProxy.DataObjects;
-    using FtpProxy.Helpers;
+    using FtpProxy.Extensions;
     using FtpProxy.Interfaces;
     using Microsoft.Extensions.Logging;
     using Microsoft.Extensions.Options;

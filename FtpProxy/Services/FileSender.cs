@@ -2,7 +2,6 @@
 {
     using FtpProxy.DataObjects;
     using FtpProxy.Extensions;
-    using FtpProxy.Helpers;
     using FtpProxy.Interfaces;
     using Microsoft.Extensions.Options;
     using System;
@@ -28,7 +27,7 @@
 
             fileName = string.IsNullOrEmpty(AppSettings.DropFolder) ? fileName : $"{this.AppSettings.DropFolder}/{fileName}";
 
-            var destination = ftpServer + "/" + fileName;
+            var destination = ftpServer + "/" + fileName + " " + DateTime.Now.Ticks;
 
             var ftpUsername = this.AppSettings.FtpUser;
             var ftpPassword = this.AppSettings.FtpPassword;
@@ -60,7 +59,7 @@
                     request.GetResponse();
                 }
             }
-            catch
+            finally
             {
                 // Do nothing - just attempt it
             }

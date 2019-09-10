@@ -2,7 +2,6 @@
 {
     using FtpProxy.DataObjects;
     using FtpProxy.Extensions;
-    using FtpProxy.Helpers;
     using FtpProxy.Interfaces;
     using Microsoft.Extensions.Options;
     using System.IO;
@@ -21,9 +20,9 @@
         {
             filename.CheckNullOrEmpty(nameof(filename));
 
-            var destination = AppSettings.LocalDestination;
+            CheckDestinationDirectory();
 
-            Directory.CreateDirectory(destination);
+            var destination = AppSettings.LocalDestination;
 
             var ftpServer = GetServerAddress();
             var user = AppSettings.FtpUser;
@@ -44,6 +43,16 @@
         {
             var ftpServer = this.AppSettings.FtpServerAddress;
             return FilePathHelper.StripTrailingSlash(ftpServer);
+        }
+
+        private void CheckDestinationDirectory()
+        {
+            var destination = AppSettings.LocalDestination;
+
+            if ( Directory.Exists(destination) == false )
+            {
+                throw new BusinessException($"Destination directory not found {destination}");
+            }
         }
     }
 }

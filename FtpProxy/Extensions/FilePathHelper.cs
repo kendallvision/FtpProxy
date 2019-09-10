@@ -1,4 +1,4 @@
-﻿namespace FtpProxy.Helpers
+﻿namespace FtpProxy.Extensions
 {
     public class FilePathHelper
     {
