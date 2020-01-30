@@ -1,4 +1,4 @@
-# FtpProxy for EZPrints
+# FtpProxy
 
 ## Technologies Included
 * .NetCore 2.2
